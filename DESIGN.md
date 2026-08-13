@@ -24,6 +24,21 @@ text in a freshly created README.md — stay in the `.md` wrapper prompts,
 because that's the one part a shell script can't do well. Script for
 mechanics, prompt for judgment.
 
+## Why a diagnostic script instead of an MCP server
+
+`check-github-setup.sh` exists because `the-end.sh`'s push step has four
+distinct failure modes (git missing, identity unset, no remote, auth not
+configured), and surfacing git's raw error for any of them is a poor
+experience on a fresh machine. An MCP server was considered and rejected:
+MCP would give the agent GitHub *API* access (issues, PRs, CI status) —
+useful for other things, but irrelevant here, since `git push` auth is a
+local SSH/HTTPS credential problem that has nothing to do with the GitHub
+API. The script checks each gate in order and stops at the first failure
+with one concrete fix, rather than dumping every possible problem at once.
+It never modifies anything — diagnosis only, so it's safe to run anytime,
+including as the first thing on a brand new machine before ever running
+`once-upon-a-time`.
+
 ## Why global instead of project-scoped
 
 The kit originally installed `scripts/` and the command wrappers *inside*

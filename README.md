@@ -8,6 +8,10 @@ project on a machine, with no per-project setup.
   starter `AGENTS.md`, `TODO.md`, and `README.md`.
 - **`the end`** — updates `AGENTS.md` / `TODO.md` / `README.md` to reflect
   the session, then commits and pushes.
+- **`check github setup`** — diagnoses whether git/GitHub is ready for
+  commit + push on this machine (git installed, identity set, remote
+  configured, push auth working) and prints the specific fix for whichever
+  check fails first.
 
 ## Install (once per machine)
 
@@ -51,10 +55,12 @@ agent-command-kit/
 ├── install.ps1         # installer: native PowerShell
 ├── scripts/
 │   ├── once-upon-a-time.sh    # git init + AGENTS.md/TODO.md/README.md
-│   └── the-end.sh             # git add, commit, push
-└── commands/            # source wrapper prompts, copied to all three tools
+│   ├── the-end.sh             # git add, commit, push
+│   └── check-github-setup.sh  # diagnose git/GitHub setup, no side effects
+└── commands/                  # source wrapper prompts, copied to all three tools
     ├── once-upon-a-time.md
-    └── the-end.md
+    ├── the-end.md
+    └── check-github-setup.md
 ```
 
 ## Requirements
