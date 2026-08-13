@@ -15,7 +15,19 @@ $TmpDir = Join-Path $env:TEMP ("agent-command-kit-" + [guid]::NewGuid())
 
 try {
     Write-Host "Fetching agent-command-kit..."
-    git clone --depth 1 $KitRepo $TmpDir *> $null
+    # git writes normal progress ("Cloning into...") to stderr. With
+    # ErrorActionPreference = Stop, PowerShell treats ANY stderr line from
+    # a native command as a terminating error even on success - so we
+    # temporarily relax that and check $LASTEXITCODE ourselves instead.
+    $prevEap = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    git clone --depth 1 --quiet $KitRepo $TmpDir 2>&1 | Out-Null
+    $cloneExitCode = $LASTEXITCODE
+    $ErrorActionPreference = $prevEap
+
+    if ($cloneExitCode -ne 0) {
+        throw "git clone failed with exit code $cloneExitCode"
+    }
 
     # 1. Scripts - the actual git-mechanics logic, installed once, invoked
     #    by absolute path from whatever project you're in.
